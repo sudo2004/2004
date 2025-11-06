@@ -1,0 +1,75 @@
+#!/bin/bash
+
+file="addressbook.txt"
+
+create_book() {
+    if [ -e "$file" ]; then
+        echo "Address Book already exists."
+    else
+        touch "$file"
+        echo "Address Book created."
+    fi
+}
+
+view_book() {
+    if [ ! -s "$file" ]; then
+        echo "Address Book is empty."
+    else
+        echo "------ Address Book ------"
+        cat "$file"
+        echo "---------------------------"
+    fi
+}
+
+insert_record() {
+    echo "Enter record in format: LastName,FirstName,Email,Phone"
+    read record
+    echo "$record" >> "$file"
+    echo "Record added successfully."
+}
+
+delete_record() {
+    echo "Enter any keyword to delete (like last name or phone):"
+    read key
+    grep -n "$key" "$file"
+    echo "Enter line number to delete:"
+    read num
+    sed -i "${num}d" "$file"
+    echo "Record deleted successfully."
+}
+
+modify_record() {
+    echo "Enter any keyword to modify (like last name or phone):"
+    read key
+    grep -n "$key" "$file"
+    echo "Enter line number to modify:"
+    read num
+    echo "Enter new record in format: LastName,FirstName,Email,Phone"
+    read newrec
+    sed -i "${num}s/.*/$newrec/" "$file"
+    echo "Record updated successfully."
+}
+
+while true; do
+    echo
+    echo "===== ADDRESS BOOK MENU ====="
+    echo "1. Create Address Book"
+    echo "2. View Address Book"
+    echo "3. Insert a Record"
+    echo "4. Delete a Record"
+    echo "5. Modify a Record"
+    echo "6. Exit"
+    echo "=============================="
+    echo -n "Enter your choice: "
+    read ch
+
+    case $ch in
+        1) create_book ;;
+        2) view_book ;;
+        3) insert_record ;;
+        4) delete_record ;;
+        5) modify_record ;;
+        6) echo "Exiting..."; break ;;
+        *) echo "Invalid choice. Try again." ;;
+    esac
+done
